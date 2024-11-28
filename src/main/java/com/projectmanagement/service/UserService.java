@@ -1,5 +1,6 @@
 package com.projectmanagement.service;
 
+import com.projectmanagement.dto.UserDetailsResponse;
 import com.projectmanagement.exception.CustomException;
 import com.projectmanagement.model.User;
 import com.projectmanagement.repository.UserRepository;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -102,10 +104,30 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    // Fetch user ID by email (used in ProjectController)
+    // Fetch user ID by email
     public int getUserIdByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
         return user.getId();
+    }
+
+    // Fetch user by email
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
+    // Fetch user details as a DTO by email
+    public UserDetailsResponse getUserDetailsByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
+
+        // Map User entity to UserDetailsResponse DTO
+        return new UserDetailsResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                user.getRole() // Use the single role directly
+        );
     }
 }

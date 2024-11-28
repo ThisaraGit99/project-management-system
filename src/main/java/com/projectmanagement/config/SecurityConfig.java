@@ -5,6 +5,7 @@ import com.projectmanagement.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.authentication.AuthenticationManager;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true) // Enables @PreAuthorize annotations
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -27,7 +28,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // to encode passwords
+        return new BCryptPasswordEncoder(); // Encode passwords
     }
 
     @Bean
@@ -41,16 +42,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Disabling CSRF (Cross-Site Request Forgery) protection - common for stateless APIs
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable()) // Disable CSRF protection for stateless APIs
                 .authorizeRequests()
-                .requestMatchers("/api/auth/**").permitAll()  // Public endpoints for authentication and registration
-                // Role-based access control for /api/projects
-                .requestMatchers("/api/projects/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")  // Both users and admins can access "/api/projects/**"
-                .requestMatchers("/api/projects/admin/**").hasAuthority("ROLE_ADMIN")  // Only admins can access certain admin-specific endpoints under "/api/projects/admin/**"
-                .anyRequest().authenticated()  // Require authentication for other endpoints
+                .requestMatchers("/api/auth/**").permitAll()  // Allow public access to auth endpoints
+                .requestMatchers("/api/projects/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")  // Access control for all projects
+                .requestMatchers("/api/projects/admin/**").hasAuthority("ROLE_ADMIN")  // Admin-only endpoints
+                .anyRequest().authenticated()  // Authenticate other requests
                 .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter before UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
 
         return http.build();
     }

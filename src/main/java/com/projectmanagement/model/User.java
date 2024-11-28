@@ -44,4 +44,5 @@ public class User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_" + role));
     }
+
 }
