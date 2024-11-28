@@ -29,6 +29,11 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    // Extract role from the token
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> (String) claims.get("role"));
+    }
+
     // Extract a specific claim from the token
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -62,9 +67,14 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    // Generate a new token for a given user
+    // Generate a new token for a given user with role
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        // Add the user's role to the claims (e.g., ROLE_USER or ROLE_ADMIN)
+        claims.put("role", userDetails.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .findFirst()
+                .orElse("ROLE_USER"));  // Default to "ROLE_USER" if role is not found
         return createToken(claims, userDetails.getUsername());
     }
 

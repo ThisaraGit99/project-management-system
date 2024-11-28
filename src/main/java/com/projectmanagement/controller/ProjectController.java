@@ -25,7 +25,7 @@ public class ProjectController {
 
     // Get all projects
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<List<Project>> getAllProjects() {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
@@ -56,7 +56,7 @@ public class ProjectController {
 
     // Get project by ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<Project> getProjectById(@PathVariable int id) {
         return projectService.getProjectById(id)
                 .map(ResponseEntity::ok)
@@ -65,14 +65,14 @@ public class ProjectController {
 
     // Update a project
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Project> updateProject(@PathVariable int id, @RequestBody Project project) {
         return ResponseEntity.ok(projectService.updateProject(id, project));
     }
 
     // Delete a project
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> deleteProject(@PathVariable int id) {
         projectService.deleteProject(id);
         return ResponseEntity.ok("Project deleted successfully");
@@ -80,14 +80,14 @@ public class ProjectController {
 
     // Find projects by status
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<List<Project>> getProjectsByStatus(@PathVariable String status) {
         return ResponseEntity.ok(projectService.getProjectsByStatus(status));
     }
 
     // Find projects created by a specific user
     @GetMapping("/creator/{createdBy}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<List<Project>> getProjectsByCreator(@PathVariable int createdBy) {
         return ResponseEntity.ok(projectService.getProjectsByCreator(createdBy));
     }

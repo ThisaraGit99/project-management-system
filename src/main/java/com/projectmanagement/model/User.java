@@ -40,7 +40,8 @@ public class User {
     private Date createdAt;
 
     // Method to return authorities (roles) as GrantedAuthority
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority(role));
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_" + role));
     }
 }

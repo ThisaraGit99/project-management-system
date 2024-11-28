@@ -79,42 +79,35 @@ public class UserController {
     }
 
     // Get all users (secured)
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
     // Create a new user (secured)
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
     // Get user by ID (secured)
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
         return userService.getUserById(id);
     }
 
     // Update a user (secured)
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public User updateUser(@PathVariable int id, @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 
-    // Delete a user (secured)
-//    @PreAuthorize("hasAuthority('admin')")
-//    @DeleteMapping("/{id}")
-//    public void deleteUser(@PathVariable int id) {
-//        userService.deleteUser(id);
-//    }
-
     // Endpoint for deleting a user (secured for admin only)
-    @PreAuthorize("hasAuthority('admin')")  // Only allow users with 'admin' authority to delete users
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id) {
         try {
@@ -132,6 +125,4 @@ public class UserController {
             return ResponseEntity.status(400).body("Error: " + e.getMessage());
         }
     }
-
-
 }

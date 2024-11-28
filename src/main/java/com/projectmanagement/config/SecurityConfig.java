@@ -42,7 +42,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Disabling CSRF (Cross-Site Request Forgery) protection - common for stateless APIs
-        http.csrf().disable()
+        http.csrf(csrf -> csrf.disable())
                 .authorizeRequests()
                 .requestMatchers("/api/auth/**").permitAll()  // Public endpoints for authentication and registration
                 // Role-based access control for /api/projects
